@@ -5,7 +5,7 @@ import os
 import pytz
 import re
 import random
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, time
 import asyncio
 from pathlib import Path
 
@@ -496,8 +496,8 @@ async def process_weekly_goal():
         except Exception as e:
             print(f"❌ Error processing weekly goal for {guild.name}: {e}")
 
-reset_clock = datetime.time(hour=0, tzinfo=TIMEZONE)
-
+reset_clock = time(hour=0, tzinfo=TIMEZONE)
+now = datetime.now(TIMEZONE)
 @tasks.loop(time=reset_clock)
 async def weekly_reset():
     now = datetime.now(TIMEZONE)
