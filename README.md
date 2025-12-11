@@ -1,5 +1,5 @@
 # Pokemeow-Clan-Bot
-Helpful bot for a Pokemeow Clan
+Helpful bot for a Pokemeow Discord Clan
 
 Adjust the config constants at the top of the file to match your server: ROLE_NAME (clan role), MOD_ROLE_NAME, BOT_ROLES, CATEGORY_NAME, TRACKER_CHANNEL_NAME, TRACKER_CATEGORY_NAME, LEAVE_CHANNEL_ID, TREASURY_ID, and IGNORED_USER_IDS.​
 
