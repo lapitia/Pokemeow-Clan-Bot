@@ -496,13 +496,38 @@ async def process_weekly_goal():
         except Exception as e:
             print(f"❌ Error processing weekly goal for {guild.name}: {e}")
 
-reset_clock = time(hour=0, tzinfo=TIMEZONE)
-now = datetime.now(TIMEZONE)
-@tasks.loop(time=reset_clock)
+@tasks.loop(hours=168)
 async def weekly_reset():
+    await process_weekly_goal()
+
+
+@weekly_reset.before_loop
+async def before_weekly_reset():
+    """Wait until next Sunday at RESET_TIME (00:00 EST) before starting the loop"""
+    await bot.wait_until_ready()
+
     now = datetime.now(TIMEZONE)
-    if now.weekday() == 6:  # Sunday
-        await process_weekly_goal()
+
+    days_until_sunday = (6 - now.weekday()) % 7
+
+    next_sunday = now + timedelta(days=days_until_sunday)
+    next_sunday = next_sunday.replace(
+        hour=RESET_TIME,
+        minute=0,
+        second=0,
+        microsecond=0
+    )
+
+    # If we're already past this Sunday's reset time, schedule for next week
+    if next_sunday <= now:
+        next_sunday += timedelta(days=7)
+
+    seconds_until_sunday = (next_sunday - now).total_seconds()
+    print(
+        f"Weekly reset scheduled for {next_sunday}. "
+        f"Waiting {seconds_until_sunday/3600:.1f} hours..."
+    )
+    await asyncio.sleep(seconds_until_sunday)
 
 # Manual reset command for testing
 @bot.command(name='forcereset')
